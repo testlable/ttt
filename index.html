@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dairy Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        .sidebar-collapsed {
+            width: 70px;
+        }
+        .sidebar-collapsed .nav-text {
+            display: none;
+        }
+        .sidebar-collapsed .logo-text {
+            display: none;
+        }
+        .sidebar-collapsed .nav-item {
+            justify-content: center;
+        }
+        .content {
+            transition: margin-left 0.3s ease;
+        }
+        .chart-container {
+            height: 300px;
+        }
+        .animal-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .status-active {
+            background-color: #10B981;
+        }
+        .status-inactive {
+            background-color: #EF4444;
+        }
+        .status-pregnant {
+            background-color: #F59E0B;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-blue-800 text-white w-64 flex flex-col sidebar-collapsed">
+            <div class="p-4 flex items-center">
+                <i class="fas fa-cow text-2xl mr-3"></i>
+                <span class="logo-text text-xl font-bold">Dairy ERP</span>
+            </div>
+            <div class="flex-grow overflow-y-auto">
+                <nav class="mt-6">
+                    <div class="px-4 mb-8">
+                        <div class="relative">
+                            <input type="text" class="w-full bg-blue-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search...">
+                            <i class="fas fa-search absolute right-3 top-3 text-blue-300"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="px-4 mb-4">
+                        <p class="text-blue-300 uppercase text-xs font-semibold tracking-wider nav-text">Main</p>
+                    </div>
+                    
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-white bg-blue-700 border-l-4 border-blue-300">
+                        <i class="fas fa-tachometer-alt mr-3"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    
+                    <div class="px-4 mt-6 mb-4">
+                        <p class="text-blue-300 uppercase text-xs font-semibold tracking-wider nav-text">Operations</p>
+                    </div>
+                    
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-white hover:bg-blue-700">
+                        <i class="fas fa-faucet mr-3"></i>
+                        <span class="nav-text">Milk Collection</span>
+                    </a>
+                    
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-white hover:bg-blue-700">
+                        <i class="fas fa-cow mr-3"></i>
+                        <span class="nav-text">Animal Management</span>
+                    </a>
+                    
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-white hover:bg-blue-700">
+                        <i class="fas fa-seedling mr-3"></i>
+                        <span class="nav-text">Feed Management</span>
+                    </a>
+                    
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-white hover:bg-blue-700">
+                        <i class="fas fa-clipboard-check mr-3"></i>
+                        <span class="nav-text">Production Tracking</span>
+                    </a>
+                    
+                    <div class="px-4 mt-6 mb-4">
+                        <p class="text-blue-300 uppercase text-xs font-semibold tracking-wider nav-text">Financial</p>
+                    </div>
+                    
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-white hover:bg-blue-700">
+                        <i class="fas fa-shopping-cart mr-3"></i>
+                        <span class="nav-text">Procurement</span>
+                    </a>
+                    
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-white hover:bg-blue-700">
+                        <i class="fas fa-money-bill-wave mr-3"></i>
+                        <span class="nav-text">Sales</span>
+                    </a>
+                    
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-white hover:bg-blue-700">
+                        <i class="fas fa-file-invoice-dollar mr-3"></i>
+                        <span class="nav-text">Accounting</span>
+                    </a>
+                    
+                    <div class="px-4 mt-6 mb-4">
+                        <p class="text-blue-300 uppercase text-xs font-semibold tracking-wider nav-text">Reports</p>
+                    </div>
+                    
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-white hover:bg-blue-700">
+                        <i class="fas fa-chart-line mr-3"></i>
+                        <span class="nav-text">Analytics</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="p-4 border-t border-blue-700">
+                <div class="flex items-center">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="w-8 h-8 rounded-full mr-2">
+                    <div class="nav-text">
+                        <p class="text-sm font-medium">John Doe</p>
+                        <p class="text-xs text-blue-300">Admin</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm">
+                <div class="flex items-center justify-between px-6 py-3">
+                    <div class="flex items-center">
+                        <button id="sidebarToggle" class="text-gray-500 focus:outline-none mr-4">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h1 class="text-xl font-semibold text-gray-800">Dashboard</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="text-gray-500 focus:outline-none">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                        <button class="text-gray-500 focus:outline-none">
+                            <i class="fas fa-envelope"></i>
+                        </button>
+                        <button class="text-gray-500 focus:outline-none">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                                <i class="fas fa-faucet text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Today's Milk</p>
+                                <h3 class="text-2xl font-bold">1,245 <span class="text-sm text-gray-500">liters</span></h3>
+                                <p class="text-green-500 text-sm flex items-center">
+                                    <i class="fas fa-arrow-up mr-1"></i> 12% from yesterday
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                                <i class="fas fa-cow text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Total Animals</p>
+                                <h3 class="text-2xl font-bold">287</h3>
+                                <p class="text-sm text-gray-500">
+                                    <span class="animal-status status-active"></span> 245 active
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                                <i class="fas fa-money-bill-wave text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Today's Sales</p>
+                                <h3 class="text-2xl font-bold">$2,450</h3>
+                                <p class="text-red-500 text-sm flex items-center">
+                                    <i class="fas fa-arrow-down mr-1"></i> 5% from yesterday
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
+                                <i class="fas fa-seedling text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Feed Stock</p>
+                                <h3 class="text-2xl font-bold">1,450 <span class="text-sm text-gray-500">kg</span></h3>
+                                <p class="text-sm text-gray-500">
+                                    <span class="text-red-500">Low stock alert</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold">Milk Production (Last 7 Days)</h2>
+                            <select class="bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                <option>Last 7 Days</option>
+                                <option>Last 30 Days</option>
+                                <option>This Month</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="milkChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold">Animal Health Status</h2>
+                            <select class="bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                <option>All Animals</option>
+                                <option>Active Only</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="healthChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activities and Tasks -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Recent Milk Collections -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-4 border-b">
+                            <h2 class="text-lg font-semibold">Recent Milk Collections</h2>
+                        </div>
+                        <div class="divide-y">
+                            <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                <div class="flex justify-between">
+                                    <div>
+                                        <p class="font-medium">Morning Shift</p>
+                                        <p class="text-sm text-gray-500">8:00 AM - 12:00 PM</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-medium">645 liters</p>
+                                        <p class="text-sm text-gray-500">12 farmers</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                <div class="flex justify-between">
+                                    <div>
+                                        <p class="font-medium">Evening Shift</p>
+                                        <p class="text-sm text-gray-500">4:00 PM - 8:00 PM</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-medium">600 liters</p>
+                                        <p class="text-sm text-gray-500">10 farmers</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                <div class="flex justify-between">
+                                    <div>
+                                        <p class="font-medium">Morning Shift</p>
+                                        <p class="text-sm text-gray-500">Yesterday</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-medium">620 liters</p>
+                                        <p class="text-sm text-gray-500">11 farmers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 border-t text-center">
+                            <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All Collections</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Animal Health Alerts -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-4 border-b">
+                            <h2 class="text-lg font-semibold">Health Alerts</h2>
+                        </div>
+                        <div class="divide-y">
+                            <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-red-100 text-red-600 mr-3">
+                                        <i class="fas fa-exclamation"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Cow #245 - High Fever</p>
+                                        <p class="text-sm text-gray-500">Temperature: 103.5°F</p>
+                                        <p class="text-xs text-gray-400 mt-1">Reported 2 hours ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-yellow-100 text-yellow-600 mr-3">
+                                        <i class="fas fa-exclamation"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Cow #178 - Low Milk Production</p>
+                                        <p class="text-sm text-gray-500">30% drop from average</p>
+                                        <p class="text-xs text-gray-400 mt-1">Reported 5 hours ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-blue-100 text-blue-600 mr-3">
+                                        <i class="fas fa-syringe"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Vaccination Due</p>
+                                        <p class="text-sm text-gray-500">12 animals due for vaccination</p>
+                                        <p class="text-xs text-gray-400 mt-1">Due in 2 days</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 border-t text-center">
+                            <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All Alerts</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-4 border-b">
+                            <h2 class="text-lg font-semibold">Quick Actions</h2>
+                        </div>
+                        <div class="p-4 grid grid-cols-2 gap-4">
+                            <button class="bg-blue-100 hover:bg-blue-200 text-blue-800 py-3 px-4 rounded-lg flex flex-col items-center justify-center">
+                                <i class="fas fa-faucet text-xl mb-2"></i>
+                                <span>Record Milk</span>
+                            </button>
+                            <button class="bg-green-100 hover:bg-green-200 text-green-800 py-3 px-4 rounded-lg flex flex-col items-center justify-center">
+                                <i class="fas fa-cow text-xl mb-2"></i>
+                                <span>Add Animal</span>
+                            </button>
+                            <button class="bg yellow-100 hover:bg-yellow-200 text-yellow-800 py-3 px-4 rounded-lg flex flex-col items-center justify-center">
+                                <i class="fas fa-syringe text-xl mb-2"></i>
+                                <span>Health Check</span>
+                            </button>
+                            <button class="bg-purple-100 hover:bg-purple-200 text-purple-800 py-3 px-4 rounded-lg flex flex-col items-center justify-center">
+                                <i class="fas fa-seedling text-xl mb-2"></i>
+                                <span>Feed Animals</span>
+                            </button>
+                            <button class="bg-red-100 hover:bg-red-200 text-red-800 py-3 px-4 rounded-lg flex flex-col items-center justify-center">
+                                <i class="fas fa-file-invoice-dollar text-xl mb-2"></i>
+                                <span>Create Invoice</span>
+                            </button>
+                            <button class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 py-3 px-4 rounded-lg flex flex-col items-center justify-center">
+                                <i class="fas fa-chart-line text-xl mb-2"></i>
+                                <span>Generate Report</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Toggle sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
+        });
+
+        // Milk Production Chart
+        const milkCtx = document.getElementById('milkChart').getContext('2d');
+        const milkChart = new Chart(milkCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [
+                    {
+                        label: 'Morning Shift',
+                        data: [620, 635, 640, 630, 645, 620, 645],
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Evening Shift',
+                        data: [580, 590, 600, 595, 610, 600, 600],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 500,
+                        ticks: {
+                            callback: function(value) {
+                                return value + ' L';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Animal Health Chart
+        const healthCtx = document.getElementById('healthChart').getContext('2d');
+        const healthChart = new Chart(healthCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Healthy', 'Sick', 'Under Treatment', 'Pregnant'],
+                datasets: [{
+                    data: [210, 12, 8, 15],
+                    backgroundColor: [
+                        '#10B981',
+                        '#EF4444',
+                        '#F59E0B',
+                        '#8B5CF6'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // MariaDB Connection (This would typically be in a server-side file)
+        // For demonstration, we'll show how it would connect in a real backend
+        
+        /*
+        // This is server-side code (PHP example) that would be in a separate file
+        <?php
+        $servername = "localhost";
+        $username = "your_username";
+        $password = "your_password";
+        $dbname = "dairy_management";
+
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        echo "Connected successfully";
+
+        // Example query
+        $sql = "SELECT * FROM milk_collection WHERE collection_date = CURDATE()";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            // output data of each row
+            while($row = $result->fetch_assoc()) {
+                echo "id: " . $row["id"]. " - Quantity: " . $row["quantity"]. "L<br>";
+            }
+        } else {
+            echo "0 results";
+        }
+        $conn->close();
+        ?>
+        */
+
+        // In a real application, you would use AJAX to connect to a backend API
+        // Here's how you might fetch data from the MariaDB database using JavaScript
+        
+        /*
+        // Example AJAX call to fetch milk collection data
+        function fetchMilkCollectionData() {
+            fetch('/api/milk-collection')
+                .then(response => response.json())
+                .then(data => {
+                    // Update your charts or UI with the real data
+                    console.log('Milk collection data:', data);
+                })
+                .catch(error => {
+                    console.error('Error fetching milk collection data:', error);
+                });
+        }
+
+        // Call the function when the page loads
+        window.addEventListener('load', fetchMilkCollectionData);
+        */
+    </script>
+<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=WwwTttt4747/dairy-mgt-new" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
+</html>
